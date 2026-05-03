@@ -152,6 +152,9 @@ initDB().then(() => {
     console.log(`\n✦  Big Red Wishes  →  http://localhost:${PORT}\n✦  Admin           →  http://localhost:${PORT}/admin\n`)
   );
 }).catch(err => {
-  console.error('Failed to connect to database:', err.message);
+  console.error('Failed to connect to database:', err.message || err);
+  if (!process.env.DATABASE_URL) {
+    console.error('→ DATABASE_URL is not set. In Railway: add variable DATABASE_URL = ${{Postgres.DATABASE_URL}}');
+  }
   process.exit(1);
 });
