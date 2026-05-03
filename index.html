@@ -181,6 +181,8 @@ const PANEL_H = 210; // reserved at bottom
 
 // ── Camera ──
 let zoom = 1, panX = 0, panY = 0;
+let targetZoom = 1;
+let zoomAnchor = { wx:0, wy:0, cx:0, cy:0 }; // world point to keep fixed while zooming
 const MIN_ZOOM = 0.1, MAX_ZOOM = 5;
 
 // ── Mouse ──
@@ -397,6 +399,13 @@ function updateParticles(){
 //  MAIN DRAW LOOP
 // ────────────────────────────────────────────────────
 function draw(){
+  // smooth zoom
+  if(Math.abs(zoom - targetZoom) > 0.0005){
+    zoom += (targetZoom - zoom) * 0.13;
+    panX = zoomAnchor.wx - (zoomAnchor.cx - W/2) / zoom;
+    panY = zoomAnchor.wy - (zoomAnchor.cy - H/2) / zoom;
+  }
+
   // update wish drifts
   const now=Date.now();
   wishList.forEach(w=>{
@@ -586,15 +595,17 @@ function onDragEnd(){
 // ── zoom ──
 canvas.addEventListener('wheel',e=>{
   e.preventDefault();
-  const f=e.deltaY>0?.82:1.22;  // faster zoom
-  const wx=(e.clientX-W/2)/zoom+panX, wy=(e.clientY-H/2)/zoom+panY;
-  zoom=Math.min(MAX_ZOOM,Math.max(MIN_ZOOM,zoom*f));
-  panX=wx-(e.clientX-W/2)/zoom; panY=wy-(e.clientY-H/2)/zoom;
+  const f = e.deltaY>0 ? 0.82 : 1.22;
+  zoomAnchor.wx = (e.clientX-W/2)/zoom + panX;
+  zoomAnchor.wy = (e.clientY-H/2)/zoom + panY;
+  zoomAnchor.cx = e.clientX;
+  zoomAnchor.cy = e.clientY;
+  targetZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoom*f));
 },{passive:false});
-document.getElementById('zin').addEventListener('click',()=>zoom=Math.min(MAX_ZOOM,zoom*1.5));
-document.getElementById('zout').addEventListener('click',()=>zoom=Math.max(MIN_ZOOM,zoom*.6));
+document.getElementById('zin').addEventListener('click',()=>targetZoom=Math.min(MAX_ZOOM,targetZoom*1.5));
+document.getElementById('zout').addEventListener('click',()=>targetZoom=Math.max(MIN_ZOOM,targetZoom*.6));
 document.getElementById('zfit').addEventListener('click',zoomToFit);
-document.getElementById('zreset').addEventListener('click',()=>{zoom=1;panX=0;panY=0;});
+document.getElementById('zreset').addEventListener('click',()=>{ targetZoom=1; zoom=1; panX=0; panY=0; });
 
 function zoomToFit(){
   if(wishList.length===0) return;
@@ -604,8 +615,8 @@ function zoomToFit(){
   panX=(minX+maxX)/2;
   panY=(minY+maxY)/2;
   const spanX=maxX-minX+600, spanY=maxY-minY+600;
-  zoom=Math.min(MAX_ZOOM, Math.min(W/spanX, (H-PANEL_H)/spanY));
-  zoom=Math.max(MIN_ZOOM, zoom);
+  targetZoom=Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.min(W/spanX, H/spanY)));
+  zoom=targetZoom; // snap immediately for fit
 }
 
 // ── touch ──
