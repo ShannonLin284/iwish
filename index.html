@@ -317,15 +317,49 @@ function drawWishPlanet(w, sc, alpha){
 
   ctx.restore();
 
-  // name label (only when reasonably zoomed)
+  // name label
   if(zoom>0.28 && alpha>0.3){
     ctx.save();
     ctx.globalAlpha = alpha * Math.min(1,(zoom-0.28)*4);
-    ctx.font=`400 ${Math.max(9,11*zoom)}px 'Cinzel',serif`;
+    ctx.font=`600 ${Math.max(9,11*zoom)}px 'Cinzel',serif`;
     ctx.textAlign='center';
-    ctx.fillStyle=ha(t.mid,.9);
-    ctx.shadowColor=t.outer; ctx.shadowBlur=8;
+    ctx.fillStyle=ha(t.mid,.95);
+    ctx.shadowColor=t.outer; ctx.shadowBlur=10;
     ctx.fillText(w.name, sc.x, sc.y - eff*1.6 - 6);
+    ctx.restore();
+  }
+
+  // wish text — appears when zoomed in close
+  if(zoom>0.6 && alpha>0.3){
+    const textAlpha = alpha * Math.min(1,(zoom-0.6)*3);
+    ctx.save();
+    ctx.globalAlpha = textAlpha;
+    ctx.textAlign='center';
+    ctx.shadowColor=t.outer; ctx.shadowBlur=6;
+
+    const fontSize = Math.max(10, 10*zoom);
+    ctx.font=`italic 300 ${fontSize}px 'Cormorant Garamond',Georgia,serif`;
+    ctx.fillStyle=ha(t.core,.88);
+
+    // word-wrap to ~220px at current zoom
+    const maxW = Math.max(140, 220*zoom);
+    const words = w.text.split(' ');
+    const lines = [];
+    let line = '';
+    for(const word of words){
+      const test = line ? line+' '+word : word;
+      if(ctx.measureText(test).width > maxW && line){
+        lines.push(line); line = word;
+      } else { line = test; }
+    }
+    if(line) lines.push(line);
+    // cap at 4 lines
+    const shown = lines.slice(0,4);
+    if(lines.length>4) shown[3] = shown[3].replace(/\s*\w+$/, '…');
+
+    const lineH = fontSize * 1.45;
+    const startY = sc.y + eff*1.55 + fontSize;
+    shown.forEach((l,i) => ctx.fillText(l, sc.x, startY + i*lineH));
     ctx.restore();
   }
 }
