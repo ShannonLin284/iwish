@@ -132,7 +132,7 @@
 <canvas id="sky"></canvas>
 
 <div id="counter">
-  <div id="counter-num">✦ 0 WISHES ✦</div>
+  <div id="counter-num">Big Red Wishes: 0</div>
   <div id="counter-sub">Big Red wishes drifting through the cosmos</div>
 </div>
 
@@ -426,10 +426,11 @@ function draw(){
 // ────────────────────────────────────────────────────
 function updateCounter(){
   const n=wishList.length;
-  document.getElementById('counter-num').textContent=
-    n===0 ? '✦ GO BIG RED ✦'
-    :n===1 ? '✦ 1 BIG RED WISH ✦'
-    :`✦ ${n.toLocaleString()} BIG RED WISHES ✦`;
+  document.getElementById('counter-num').textContent = `Big Red Wishes: ${n.toLocaleString()}`;
+
+
+
+
 }
 
 // ────────────────────────────────────────────────────
