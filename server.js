@@ -3,11 +3,16 @@ const http    = require('http');
 const { WebSocketServer } = require('ws');
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs   = require('fs');
 
 const app    = express();
 const server = http.createServer(app);
 const wss    = new WebSocketServer({ server });
-const db     = new Database(path.join(__dirname, 'wishes.db'));
+
+// ── DB path: use /data volume on Railway, local fallback ──
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || __dirname;
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+const db = new Database(path.join(DATA_DIR, 'wishes.db'));
 
 // ── Schema ──
 db.exec(`
@@ -41,7 +46,6 @@ app.post('/api/wishes', (req, res) => {
   const { name, text, type_idx } = req.body;
   if (!text || !text.trim()) return res.status(400).json({ error: 'wish text required' });
 
-  // Server assigns position so it's consistent for all clients
   const SPREAD_X = 4200, SPREAD_Y = 2400;
   const row = {
     name:        (name  || 'Anonymous').trim().slice(0, 40),
@@ -65,12 +69,55 @@ app.post('/api/wishes', (req, res) => {
 
   const saved = db.prepare('SELECT * FROM wishes WHERE id=?').get(lastInsertRowid);
 
-  // Broadcast to every connected client
   const msg = JSON.stringify({ event: 'wish', data: saved });
   wss.clients.forEach(c => { if (c.readyState === 1) c.send(msg); });
 
   res.status(201).json(saved);
 });
+
+// ── Admin page ──
+app.get('/admin', (req, res) => {
+  const wishes = db.prepare('SELECT * FROM wishes ORDER BY born DESC').all();
+  const rows = wishes.map(w => `
+    <tr>
+      <td>${w.id}</td>
+      <td>${esc(w.name)}</td>
+      <td>${esc(w.text)}</td>
+      <td>${new Date(w.born).toLocaleString()}</td>
+    </tr>`).join('');
+
+  res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Big Red Wishes — Admin</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0e0000; color: #ffd0d0; padding: 32px; }
+    h1 { color: #e03030; margin-bottom: 6px; }
+    .sub { color: rgba(255,160,160,.45); font-size: .85rem; margin-bottom: 28px; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th { text-align: left; padding: 10px 14px; background: rgba(179,27,27,.25);
+         color: #e03030; font-weight: 600; letter-spacing: .05em; border-bottom: 1px solid rgba(179,27,27,.3); }
+    td { padding: 10px 14px; border-bottom: 1px solid rgba(179,27,27,.12); vertical-align: top; }
+    tr:hover td { background: rgba(179,27,27,.07); }
+    .count { font-size: 1.1rem; font-weight: 700; color: #e03030; }
+  </style>
+</head>
+<body>
+  <h1>🔴 Big Red Wishes</h1>
+  <div class="sub">Admin — all wishes in the database</div>
+  <p class="count">${wishes.length.toLocaleString()} total wishes</p><br/>
+  <table>
+    <thead><tr><th>#</th><th>Name</th><th>Wish</th><th>Time</th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="4" style="opacity:.4;padding:20px">No wishes yet</td></tr>'}</tbody>
+  </table>
+</body>
+</html>`);
+});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 // ── WebSocket ──
 wss.on('connection', ws => {
@@ -80,5 +127,5 @@ wss.on('connection', ws => {
 // ── Listen ──
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () =>
-  console.log(`\n✦  Galaxy Wishes  →  http://localhost:${PORT}\n`)
+  console.log(`\n✦  Big Red Wishes  →  http://localhost:${PORT}\n✦  Admin           →  http://localhost:${PORT}/admin\n`)
 );
