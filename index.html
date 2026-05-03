@@ -406,26 +406,6 @@ function draw(){
   bg.addColorStop(0,'#0a0000'); bg.addColorStop(.5,'#000000'); bg.addColorStop(1,'#000000');
   ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
-  // Milky Way band
-  const mw=ctx.createLinearGradient(0,H*.2,W,H*.8);
-  mw.addColorStop(0,'transparent');
-  mw.addColorStop(.35,'rgba(179,27,27,.04)');
-  mw.addColorStop(.5,'rgba(200,40,40,.06)');
-  mw.addColorStop(.65,'rgba(179,27,27,.04)');
-  mw.addColorStop(1,'transparent');
-  ctx.fillStyle=mw; ctx.fillRect(0,0,W,H);
-
-  // ── nebulae ──
-  nebulae.forEach(n=>{
-    const big=Math.max(n.rX,n.rY);
-    const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,big);
-    g.addColorStop(0,n.c); g.addColorStop(1,'transparent');
-    ctx.save();
-    ctx.scale(n.rX/big,n.rY/big);
-    ctx.fillStyle=g; ctx.beginPath();
-    ctx.arc(n.x*big/n.rX,n.y*big/n.rY,big,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-  });
 
   // ── bg stars (parallax) ──
   bgStars.forEach(s=>{
