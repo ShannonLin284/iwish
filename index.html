@@ -11,12 +11,12 @@
     :root {
       --red:#B31B1B; --red-light:#e03030; --red-glow:#ff4444;
       --cream:#fff0f0; --bronze:#c4973a;
-      --deep:#2a0000; --panel-h:200px;
+      --deep:#000000; --panel-h:200px;
       --serif:'Cormorant Garamond',Georgia,serif;
       --display:'Cinzel',serif;
     }
 
-    html,body { width:100%;height:100%;overflow:hidden;background:#2a0000;font-family:var(--serif);color:#fff;user-select:none; }
+    html,body { width:100%;height:100%;overflow:hidden;background:#000000;font-family:var(--serif);color:#fff;user-select:none; }
 
     /* ── canvas ── */
     #sky { position:fixed;inset:0;z-index:0; }
@@ -402,7 +402,7 @@ function draw(){
 
   // ── deep space background ──
   const bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.85);
-  bg.addColorStop(0,'#3a0000'); bg.addColorStop(.5,'#2a0000'); bg.addColorStop(1,'#1e0000');
+  bg.addColorStop(0,'#0a0000'); bg.addColorStop(.5,'#000000'); bg.addColorStop(1,'#000000');
   ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
   // Milky Way band
