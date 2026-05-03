@@ -1,0 +1,4 @@
+node_modules/
+wishes.db
+*.db-shm
+*.db-wal
