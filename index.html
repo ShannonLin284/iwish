@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Little Prince — Galaxy Wishes</title>
+  <title>Big Red Wishes — Cornell</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&display=swap');
 
     * { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --gold:#f0c060; --rose:#f4a0b0; --sky:#88c8f8;
-      --deep:#06001a; --panel-h:200px;
+      --red:#B31B1B; --red-light:#e03030; --red-glow:#ff4444;
+      --cream:#fff0f0; --bronze:#c4973a;
+      --deep:#0e0000; --panel-h:200px;
       --serif:'Cormorant Garamond',Georgia,serif;
       --display:'Cinzel',serif;
     }
 
-    html,body { width:100%;height:100%;overflow:hidden;background:var(--deep);font-family:var(--serif);color:#fff;user-select:none; }
+    html,body { width:100%;height:100%;overflow:hidden;background:#0e0000;font-family:var(--serif);color:#fff;user-select:none; }
 
     /* ── canvas ── */
     #sky { position:fixed;inset:0;z-index:0; }
@@ -24,15 +25,15 @@
     #counter {
       position:fixed;top:0;left:0;right:0;z-index:10;
       text-align:center;padding:18px 20px 10px;
-      background:linear-gradient(180deg,rgba(6,0,26,.94) 0%,transparent 100%);
+      background:linear-gradient(180deg,rgba(14,0,0,.96) 0%,transparent 100%);
       pointer-events:none;
     }
     #counter-num {
       font-family:var(--display);font-size:1.1rem;font-weight:400;letter-spacing:.18em;
-      color:var(--gold);text-shadow:0 0 24px rgba(240,192,96,.7),0 0 60px rgba(240,192,96,.25);
+      color:var(--red-light);text-shadow:0 0 24px rgba(179,27,27,.8),0 0 60px rgba(179,27,27,.3);
     }
     #counter-sub {
-      font-size:.72rem;letter-spacing:.22em;color:rgba(240,192,96,.38);margin-top:3px;
+      font-size:.72rem;letter-spacing:.22em;color:rgba(255,160,160,.38);margin-top:3px;
       font-style:italic;
     }
 
@@ -40,23 +41,23 @@
     #tooltip {
       position:fixed;z-index:30;max-width:220px;
       padding:13px 16px;pointer-events:none;
-      background:linear-gradient(135deg,rgba(14,4,40,.97),rgba(4,12,48,.97));
-      border:1px solid rgba(240,192,96,.28);border-radius:14px;
-      box-shadow:0 0 30px rgba(200,140,60,.2);
+      background:linear-gradient(135deg,rgba(30,0,0,.97),rgba(14,0,0,.97));
+      border:1px solid rgba(179,27,27,.35);border-radius:14px;
+      box-shadow:0 0 30px rgba(179,27,27,.2);
       opacity:0;transition:opacity .22s;
     }
     #tooltip.show { opacity:1; }
     #tooltip .tt-name {
       font-family:var(--display);font-size:.68rem;letter-spacing:.12em;
-      color:var(--gold);margin-bottom:6px;
+      color:var(--red-light);margin-bottom:6px;
     }
-    #tooltip .tt-wish { font-size:.88rem;line-height:1.55;color:rgba(240,225,210,.88);font-style:italic; }
+    #tooltip .tt-wish { font-size:.88rem;line-height:1.55;color:rgba(255,230,230,.88);font-style:italic; }
 
     /* ── bottom entry panel ── */
     #panel {
       position:fixed;bottom:0;left:0;right:0;z-index:20;
       padding:20px 20px 26px;
-      background:linear-gradient(0deg,rgba(6,0,26,.97) 70%,transparent 100%);
+      background:linear-gradient(0deg,rgba(14,0,0,.97) 70%,transparent 100%);
       backdrop-filter:blur(6px);
     }
     .panel-inner {
@@ -66,20 +67,20 @@
     .panel-inner input,
     .panel-inner textarea {
       background:rgba(255,255,255,.045);
-      border:1px solid rgba(240,192,96,.2);
+      border:1px solid rgba(179,27,27,.28);
       border-radius:40px;
-      color:rgba(240,225,210,.9);
+      color:rgba(255,230,230,.9);
       font-family:var(--serif);font-size:.97rem;
       padding:13px 22px;outline:none;
       transition:border-color .3s,box-shadow .3s;
-      caret-color:var(--gold);
+      caret-color:var(--red-light);
     }
     .panel-inner input::placeholder,
-    .panel-inner textarea::placeholder { color:rgba(240,192,96,.28);font-style:italic; }
+    .panel-inner textarea::placeholder { color:rgba(200,80,80,.38);font-style:italic; }
     .panel-inner input:focus,
     .panel-inner textarea:focus {
-      border-color:rgba(240,192,96,.5);
-      box-shadow:0 0 22px rgba(240,192,96,.12);
+      border-color:rgba(179,27,27,.6);
+      box-shadow:0 0 22px rgba(179,27,27,.15);
     }
     .panel-inner textarea {
       resize:none;height:52px;line-height:1.5;
@@ -89,15 +90,15 @@
       padding:15px;border:none;border-radius:40px;
       font-family:var(--display);font-size:.92rem;font-weight:600;letter-spacing:.18em;
       cursor:pointer;
-      background:linear-gradient(135deg,#b8842a,#e0a840,#f0c860,#e0a840,#b8842a);
+      background:linear-gradient(135deg,#7a1010,#B31B1B,#d42020,#B31B1B,#7a1010);
       background-size:200% 100%;
-      color:#2a1400;
-      box-shadow:0 4px 28px rgba(200,140,40,.45),0 0 60px rgba(200,140,40,.15);
+      color:#fff0f0;
+      box-shadow:0 4px 28px rgba(179,27,27,.55),0 0 60px rgba(179,27,27,.2);
       transition:transform .15s,box-shadow .15s,background-position .5s;
     }
     #release-btn:hover {
       transform:translateY(-2px);
-      box-shadow:0 8px 36px rgba(200,140,40,.6),0 0 80px rgba(200,140,40,.2);
+      box-shadow:0 8px 36px rgba(179,27,27,.7),0 0 80px rgba(179,27,27,.3);
       background-position:100% 0;
     }
     #release-btn:active { transform:translateY(0); }
@@ -109,17 +110,17 @@
     }
     .zbtn {
       width:36px;height:36px;border-radius:50%;
-      border:1px solid rgba(240,192,96,.25);background:rgba(6,0,26,.8);
-      color:rgba(240,192,96,.7);font-size:1.1rem;cursor:pointer;
+      border:1px solid rgba(179,27,27,.3);background:rgba(14,0,0,.8);
+      color:rgba(220,80,80,.8);font-size:1.1rem;cursor:pointer;
       display:flex;align-items:center;justify-content:center;
       transition:all .2s;backdrop-filter:blur(4px);
     }
-    .zbtn:hover { background:rgba(60,30,10,.9);border-color:rgba(240,192,96,.55);transform:scale(1.1); }
+    .zbtn:hover { background:rgba(80,0,0,.9);border-color:rgba(179,27,27,.6);transform:scale(1.1); }
 
     /* ── hint ── */
     #hint {
       position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:5;
-      font-size:.72rem;letter-spacing:.15em;color:rgba(240,192,96,.28);
+      font-size:.72rem;letter-spacing:.15em;color:rgba(220,80,80,.3);
       pointer-events:none;white-space:nowrap;font-style:italic;
       animation:breathe 5s ease-in-out infinite;
     }
@@ -132,7 +133,7 @@
 
 <div id="counter">
   <div id="counter-num">✦ 0 WISHES ✦</div>
-  <div id="counter-sub">drifting through the cosmos</div>
+  <div id="counter-sub">Big Red wishes drifting through the cosmos</div>
 </div>
 
 <div id="hint">scroll to zoom · drag to wander · hover a star to read its wish</div>
@@ -146,7 +147,7 @@
   <div class="panel-inner">
     <input id="name-input" type="text" maxlength="40" placeholder="Your name (optional)" autocomplete="off" />
     <textarea id="wish-input" maxlength="200" placeholder="Type your wish…"></textarea>
-    <button id="release-btn">✦ &nbsp; Release into the Cosmos &nbsp; ✦</button>
+    <button id="release-btn">✦ &nbsp; Send a Big Red Wish &nbsp; ✦</button>
   </div>
 </div>
 
@@ -158,7 +159,7 @@
 
 <script>
 // ══════════════════════════════════════════════════════
-//  LITTLE PRINCE — GALAXY WISHES
+//  BIG RED WISHES — CORNELL GALAXY
 // ══════════════════════════════════════════════════════
 const canvas = document.getElementById('sky');
 const ctx    = canvas.getContext('2d');
@@ -179,12 +180,12 @@ let bgStars=[], nebulae=[], wishList=[], particles=[];
 
 // ── Palette: each wish gets a "star type" ──
 const STAR_TYPES = [
-  { core:'#fff8e8', mid:'#f8d080', outer:'#c08020', ring:false }, // golden
-  { core:'#ffe8f4', mid:'#f8a0b8', outer:'#a03060', ring:false }, // rose
-  { core:'#e8f4ff', mid:'#90c8f8', outer:'#2060b0', ring:true  }, // sky blue
-  { core:'#f4f8e8', mid:'#b8e890', outer:'#407040', ring:false }, // mint
-  { core:'#f0e8ff', mid:'#c890f8', outer:'#602090', ring:true  }, // violet
-  { core:'#fff4e0', mid:'#f8c060', outer:'#904010', ring:false }, // amber
+  { core:'#ffffff', mid:'#e03030', outer:'#7a1010', ring:false }, // carnelian
+  { core:'#fff0f0', mid:'#B31B1B', outer:'#5a0808', ring:true  }, // deep red
+  { core:'#ffffff', mid:'#ff6060', outer:'#a01818', ring:false }, // bright red
+  { core:'#fff8f0', mid:'#c4973a', outer:'#7a5a10', ring:false }, // cornell bronze
+  { core:'#ffffff', mid:'#cc2222', outer:'#880000', ring:true  }, // crimson
+  { core:'#fff0f0', mid:'#ff8888', outer:'#cc2020', ring:false }, // rose red
 ];
 
 // ────────────────────────────────────────────────────
@@ -223,12 +224,12 @@ function buildBgStars(){
 
 function buildNebulae(){
   nebulae=[
-    {cx:.20,cy:.30,rx:.38,ry:.24,c:'rgba(90,20,160,.14)'},
-    {cx:.72,cy:.52,rx:.30,ry:.20,c:'rgba(20,55,175,.12)'},
-    {cx:.50,cy:.08,rx:.45,ry:.14,c:'rgba(160,30,80,.10)'},
-    {cx:.12,cy:.70,rx:.24,ry:.20,c:'rgba(30,90,190,.10)'},
-    {cx:.85,cy:.22,rx:.28,ry:.18,c:'rgba(100,20,130,.12)'},
-    {cx:.60,cy:.80,rx:.32,ry:.16,c:'rgba(60,15,120,.09)'},
+    {cx:.20,cy:.30,rx:.38,ry:.24,c:'rgba(179,27,27,.13)'},
+    {cx:.72,cy:.52,rx:.30,ry:.20,c:'rgba(120,10,10,.11)'},
+    {cx:.50,cy:.08,rx:.45,ry:.14,c:'rgba(160,20,20,.10)'},
+    {cx:.12,cy:.70,rx:.24,ry:.20,c:'rgba(140,30,10,.09)'},
+    {cx:.85,cy:.22,rx:.28,ry:.18,c:'rgba(100,15,15,.12)'},
+    {cx:.60,cy:.80,rx:.32,ry:.16,c:'rgba(180,40,10,.08)'},
   ].map(n=>({...n,x:n.cx*W,y:n.cy*H,rX:n.rx*W,rY:n.ry*H}));
 }
 
@@ -367,15 +368,15 @@ function draw(){
 
   // ── deep space background ──
   const bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.85);
-  bg.addColorStop(0,'#110028'); bg.addColorStop(.5,'#08001c'); bg.addColorStop(1,'#04000e');
+  bg.addColorStop(0,'#1a0000'); bg.addColorStop(.5,'#0e0000'); bg.addColorStop(1,'#060000');
   ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
   // Milky Way band
   const mw=ctx.createLinearGradient(0,H*.2,W,H*.8);
   mw.addColorStop(0,'transparent');
-  mw.addColorStop(.35,'rgba(140,100,200,.04)');
-  mw.addColorStop(.5,'rgba(160,120,220,.07)');
-  mw.addColorStop(.65,'rgba(140,100,200,.04)');
+  mw.addColorStop(.35,'rgba(179,27,27,.04)');
+  mw.addColorStop(.5,'rgba(200,40,40,.06)');
+  mw.addColorStop(.65,'rgba(179,27,27,.04)');
   mw.addColorStop(1,'transparent');
   ctx.fillStyle=mw; ctx.fillRect(0,0,W,H);
 
@@ -398,7 +399,7 @@ function draw(){
     const sy=((s.y+panY*px*zoom)%H+H)%H;
     const tw=.5+.5*Math.sin(frame*s.ts+s.to);
     ctx.beginPath(); ctx.arc(sx,sy,s.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,248,235,${s.a*(.5+.5*tw)})`; ctx.fill();
+    ctx.fillStyle=`rgba(255,235,235,${s.a*(.5+.5*tw)})`; ctx.fill();
   });
 
   // ── wish planets ──
@@ -426,9 +427,9 @@ function draw(){
 function updateCounter(){
   const n=wishList.length;
   document.getElementById('counter-num').textContent=
-    n===0 ? '✦ THE COSMOS AWAITS ✦'
-    :n===1 ? '✦ 1 WISH ✦'
-    :`✦ ${n.toLocaleString()} WISHES ✦`;
+    n===0 ? '✦ GO BIG RED ✦'
+    :n===1 ? '✦ 1 BIG RED WISH ✦'
+    :`✦ ${n.toLocaleString()} BIG RED WISHES ✦`;
 }
 
 // ────────────────────────────────────────────────────
@@ -459,7 +460,7 @@ document.getElementById('release-btn').addEventListener('click', async ()=>{
 
   const name=document.getElementById('name-input').value.trim();
   const btn=document.getElementById('release-btn');
-  btn.textContent='✦  Sending…  ✦';
+  btn.textContent='✦  Sending your wish…  ✦';
   btn.style.opacity='.7';
 
   try{
@@ -483,7 +484,7 @@ document.getElementById('release-btn').addEventListener('click', async ()=>{
     console.error('wish failed:',err);
     alert('Could not send wish — is the server running?');
   }finally{
-    btn.textContent='✦   Release into the Cosmos   ✦';
+    btn.textContent='✦   Send a Big Red Wish   ✦';
     btn.style.opacity='';
     submitting=false;
   }
