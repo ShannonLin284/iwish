@@ -602,8 +602,12 @@ canvas.addEventListener('wheel',e=>{
   zoomAnchor.cy = e.clientY;
   targetZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, targetZoom*f));
 },{passive:false});
-document.getElementById('zin').addEventListener('click',()=>targetZoom=Math.min(MAX_ZOOM,targetZoom*1.5));
-document.getElementById('zout').addEventListener('click',()=>targetZoom=Math.max(MIN_ZOOM,targetZoom*.6));
+function anchorCenter(){
+  zoomAnchor.wx=panX; zoomAnchor.wy=panY;
+  zoomAnchor.cx=W/2;  zoomAnchor.cy=H/2;
+}
+document.getElementById('zin').addEventListener('click',()=>{ anchorCenter(); targetZoom=Math.min(MAX_ZOOM,targetZoom*1.5); });
+document.getElementById('zout').addEventListener('click',()=>{ anchorCenter(); targetZoom=Math.max(MIN_ZOOM,targetZoom*.6); });
 document.getElementById('zfit').addEventListener('click',zoomToFit);
 document.getElementById('zreset').addEventListener('click',()=>{ targetZoom=1; zoom=1; panX=0; panY=0; });
 
